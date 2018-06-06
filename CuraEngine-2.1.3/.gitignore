@@ -1,0 +1,34 @@
+*.tar.bz2
+*.tar.gz
+*.7z
+*.zip
+.DS_Store
+*~
+NUL
+*.gcode
+
+## Building result.
+build/*
+*.pyc
+*.exe
+*.o
+CuraEngine
+_bin
+_obj
+
+## IDE project files.
+CuraEngine.layout
+CuraEngine.cbp
+*kdev*
+*.kate-swp
+nbproject/*
+.idea
+*.depend
+.*.swp
+
+## Documentation.
+documentation/html/*
+documentation/latex/*
+
+## Test results.
+tests/output.xml
