@@ -573,6 +573,12 @@ void GCodeExport::writeRetraction_extruderSwitch()
     double current_extruded_volume = getCurrentExtrudedVolume();
     std::deque<double>& extruded_volume_at_previous_n_retractions = extruder_attr[current_extruder].extruded_volume_at_previous_n_retractions;
     extruded_volume_at_previous_n_retractions.push_front(current_extruded_volume);
+    
+    std::ofstream theFile1;
+    theFile1.open("../output.txt");
+   // double printVolume = double(getCurrentExtrudedVolume());
+    //theFile1 << "Volume = ";
+    log("Volume:");
 
     if (firmware_retract)
     {
@@ -680,17 +686,26 @@ void GCodeExport::finalize(double moveSpeed, const char* endCode)
 {
     writeFanCommand(0);
     writeCode(endCode);
+    
     std::ofstream theFile;
     theFile.open("../output.txt");
     int printTime = int(getTotalPrintTime());
-    theFile << "Print TIme = " + printTime;
-    log("Print time: %d\n", int(getTotalPrintTime()));
+    int printTimeHrs = int(printTime)/3600;
+    int printTimeMin = printTime%60;
+    theFile << "Print Time = " << printTimeHrs << " Hrs " << printTimeMin << " Min\n";
+    log("Print time: %d\n in Hrs = %d\n in min = %d", int(getTotalPrintTime()), printTimeHrs,printTimeMin);
     
-    std::ifstream theFile1;
-    float layerHeight;
-    theFile1.open("input.txt");
-    theFile1 >> layerHeight;
-    log("Layer Height = %.1f\n",layerHeight);
+//     std::ofstream theFile1;
+//     theFile1.open("../output.txt");
+    double printVolume = double(getCurrentExtrudedVolume());
+    theFile << "Volume = " << printVolume << " mm^3 \n";
+    log("Volume: %lf\n",printVolume);
+    
+    // std::ifstream theFile1;
+    // float layerHeight;
+    // theFile1.open("input.txt");
+    // theFile1 >> layerHeight;
+    // log("Layer Height = %.1f\n",layerHeight);
     log("Filament: %d\n", int(getTotalFilamentUsed(0)));
     for(int n=1; n<MAX_EXTRUDERS; n++)
         if (getTotalFilamentUsed(n) > 0)
