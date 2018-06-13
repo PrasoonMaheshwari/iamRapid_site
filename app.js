@@ -63,7 +63,7 @@ app.post('/upload', (req, res) => {
       return res.status(500).send(err);
       
     stltoimg();
-    
+     var cmdURL = commandURL();
      let file = editJson("Cura/resources/machines/fdmprinter.json");
      file.get().categories.resolution.settings.layer_height.default = 0.2;
      file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = 2.333;
@@ -104,6 +104,10 @@ app.post("/modify",function(req,res){
              }
          }
     );
+    
+});
+
+app.get("/modify/:id",function(req,res){
     
 });
 
