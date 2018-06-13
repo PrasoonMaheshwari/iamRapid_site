@@ -13,31 +13,62 @@
 
 <body>
 <div class="container">
+  <hr>
 <div class="row">
-    <div class="col-md-6 m-auto">
-    <h1 class="text-center display-4 my-4">Home Page</h1>
-
-    <form action="/upload" method="POST" enctype="multipart/form-data" ref='uploadForm' 
+    <div class="col-md-12 m-auto">
+      <h1 class="text-center display-4 my-4">Home Page</h1>
+      <form action="/upload" method="POST" enctype="multipart/form-data" ref='uploadForm' 
       id='uploadForm' class="fileupload">
-        <div class="custom-file mb-3">
-            <input type="file" name="sampleFile" class="custom-file-input">
-            <label for="file" class="custom-file-label">Choose File</label>
+        <div class="custom-file mb-3" style = "border : 1px solid black">
+            <input type="file" name="sampleFile" class="custom-file-input" onchange="form.submit()" />
+            <!--<label for="file" class="custom-file-label"></label>-->
         </div>
-        <input type="submit" value="Submit" class="btn btn-primary btn-block">
+        <!--<input type="submit" value="Submit" class="btn btn-primary btn-block">-->
     </form>
-    <hr>
-    <div class="thumbnail">
-        <img src="/output.jpg" />
+      <hr>
     </div>
-    <h5><%= data %></h5>
-    <form action="/modify" method="POST" >
-        <div class="custom-file mb-3">
-            <input type="text" name="height" placeholder="Layer Height in mm">
-            <input type="text" name="infill" placeholder="Infill">
+    
+<% obj.users.forEach(function(data){ %>
+  
+    <div class="thumbnail col-lg-5 col-md-5">
+        <img src="/<%=data.name%>.jpg" />
+    </div>
+    <div class="col-lg-6 col-md-6">
+      
+      <h3>Print Time = <%=data.printTime%> </h3>
+      <h3>Weight = <%=data.printWeight%> </h3>
+      <form action="/modify" method="POST" >
+      <div class="form-row align-items-center">
+         <div class="col-auto my-1">
+            <label class="mr-sm-2" for="inlineFormCustomSelect"><h3>Layer Height</h3></label>
+         </div>
+         <div class="form-row align-items-center">
+              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name='height' onchange='this.form.submit()'>
+                <option value="0.1">0.1</option>
+                <option selected value="0.2">0.2</option>
+                <option value="0.3">0.3</option>
+              </select>
         </div>
-        <input type="submit" value="Submit" class="btn btn-primary btn-block">
+      </div>
+      <div class="form-row align-items-center">
+         <div class="col-auto my-1">
+            <label class="mr-sm-2" for="inlineFormCustomSelect"><h3>Infill</h3></label>
+         </div>
+         <div class="col-auto my-1">  
+              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name='infill' onchange='this.form.submit()'>
+                <option default value="2.333">30%</option>
+                <option value="1.333">20%</option>
+                <option value="0.333">10%</option>
+              </select>
+        </div>
+      </div>
+    
     </form>
     </div>
+    
+  <hr>
+<% }); %>
+    
 </div>
 </div>
 
