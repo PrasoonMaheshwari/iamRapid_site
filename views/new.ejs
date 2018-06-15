@@ -29,7 +29,7 @@
     </div>
     
 <% obj.users.forEach(function(data){ %>
-  
+  <hr>
     <div class="thumbnail col-lg-5 col-md-5">
         <img src="/<%=data.name%>.jpg" />
     </div>
@@ -37,7 +37,7 @@
       
       <h3>Print Time = <%=data.printTime%> </h3>
       <h3>Weight = <%=data.printWeight%> </h3>
-      <form action="/modify" method="POST" >
+      <form action="/modify" method="POST" name="<%=data.name%>">
       <div class="form-row align-items-center">
          <div class="col-auto my-1">
             <label class="mr-sm-2" for="inlineFormCustomSelect"><h3>Layer Height</h3></label>
@@ -47,6 +47,7 @@
                 <option value="0.1">0.1</option>
                 <option selected value="0.2">0.2</option>
                 <option value="0.3">0.3</option>
+                <input type ="text" name="fileName" value="<%=data.name%>" style="display : none" />
               </select>
         </div>
       </div>
@@ -59,13 +60,22 @@
                 <option default value="2.333">30%</option>
                 <option value="1.333">20%</option>
                 <option value="0.333">10%</option>
+                <input type ="text" name ="fileName" value="<%=data.name%>" style="display : none" />
               </select>
         </div>
       </div>
-    
     </form>
-    </div>
     
+    <form action="/delete/<%=data.name%>" method="POST">
+          <div class="form-row align-items-center">
+              <div class="col-auto my-1">
+                  <button name="delete" value="<%=data.name%>">Delete</button> 
+              </div>  
+          </div>
+      </form>
+    
+    
+    </div>
   <hr>
 <% }); %>
     
