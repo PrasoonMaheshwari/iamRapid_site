@@ -28,7 +28,7 @@
       <hr>
     </div>
     
-<% obj.users.forEach(function(data){ %>
+<% obj.forEach(function(data){ %>
   <hr>
     <div class="thumbnail col-lg-5 col-md-5">
         <img src="/<%=data.name%>.jpg" />
@@ -36,7 +36,7 @@
     <div class="col-lg-6 col-md-6">
       
       <h3>Print Time = <%=data.printTime%> </h3>
-      <h3>Weight = <%=data.printWeight%> </h3>
+      <h3>Weight = <%=data.weight%> </h3>
       <form action="/modify" method="POST" name="<%=data.name%>">
       <div class="form-row align-items-center">
          <div class="col-auto my-1">
@@ -66,10 +66,10 @@
       </div>
     </form>
     
-    <form action="/delete/<%=data.name%>" method="POST">
+    <form action="/delete/<%= data._id %>" method="POST">
           <div class="form-row align-items-center">
               <div class="col-auto my-1">
-                  <button name="delete" value="<%=data.name%>">Delete</button> 
+                  <button name="delete">Delete</button> 
               </div>  
           </div>
       </form>
