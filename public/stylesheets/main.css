@@ -1,0 +1,22 @@
+    .custom-file-input:lang(en)~.custom-file-label::after {
+      content: "";
+    }
+    .custom-file-label::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      display: block;
+      height: calc(calc(2.25rem + 2px) - 1px * 2);
+      padding: .375rem .75rem;
+      line-height: 1.5;
+      content: "";
+      color: #495057;
+      background-color: #e9ecef;
+      border-left: 1px solid #e9ecef;
+      border-radius: 0 .25rem .25rem 0;
+  }
+  .custom-file-label{
+    border : 0px solid #e9ecef;
+  }

@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script type="text/javascript" src="app.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
-  <style>
-  </style>
+  <link rel="stylesheet" href="/stylesheets/main.css">  
   <title>iamRapid</title>
 </head>
 
@@ -16,34 +16,53 @@
   <hr>
 <div class="row">
     <div class="col-md-12 m-auto">
-      <h1 class="text-center display-4 my-4">Home Page</h1>
+      <!--<h1 class="text-center display-4 my-4">Home Page</h1>-->
+      
+      <!--<div class="custom-file mb-3" style = "border : 1px solid black">-->
       <form action="/upload" method="POST" enctype="multipart/form-data" ref='uploadForm' 
-      id='uploadForm' class="fileupload">
-        <div class="custom-file mb-3" style = "border : 1px solid black">
-            <input type="file" name="sampleFile" class="custom-file-input" onchange="form.submit()" />
-            <!--<label for="file" class="custom-file-label"></label>-->
+      id='uploadForm' class="fileupload" style="background-color : #e9ecef; height:200px">
+        <div class="custom-file mb-3" style="background-color : #e9ecef; height:200px; border: 2px solid lightgray">
+            <!--<label for="file">-->
+            <!--   <h1>Drag & Drop </h1>-->
+            <!--   <p>or click to <h1>Upload</h1></p>-->
+            <!--</label>-->
+            <input type="file" name="sampleFile" class="custom-file-input" onchange="form.submit()" style="background-color : #e9ecef; height:200px"/>
+            <label for="file" class="custom-file-label" style="background-color : #e9ecef;">
+              <p>  </p>
+              <h2> Drag and Drop files or Click to upload</h2>
+              <hr>
+              <h5>Supported file formats:</h5>
+              <p>.stl or .zip</p>
+            </label>
         </div>
-        <!--<input type="submit" value="Submit" class="btn btn-primary btn-block">-->
-    </form>
+      </form>
+      <!--</div>-->
+      
       <hr>
     </div>
     
 <% obj.forEach(function(data){ %>
-  <hr>
-    <div class="thumbnail col-lg-5 col-md-5">
-        <img src="/<%=data.name%>.jpg" />
+
+  <div class="col-lg-5 col-md-5" style="margin-left: 15px; border: 1px solid darkgray">
+    <div class="row">
+    <div class="thumbnail col-lg-12 col-md-12">
+        <img src="/<%=data.name%>.jpg" height="200px" style="margin:auto 0" />
+        <hr>
     </div>
+    
     <div class="col-lg-6 col-md-6">
-      
-      <h3>Print Time = <%=data.printTime%> </h3>
-      <h3>Weight = <%=data.weight%> </h3>
+      <p><strong>Print Time = </strong><%=data.printTime%> <p>
+      <p><strong>Weight = </strong><%=data.weight%> <p>
+    </div>
+    
+    <div class="col-lg-6 col-md-6">
       <form action="/modify" method="POST" name="<%=data.name%>">
       <div class="form-row align-items-center">
          <div class="col-auto my-1">
-            <label class="mr-sm-2" for="inlineFormCustomSelect"><h3>Layer Height</h3></label>
+            <label class="mr-sm-2" for="inlineFormCustomSelect"><p><strong>Layer Height</strong></p></label>
          </div>
          <div class="form-row align-items-center">
-              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name='height' onchange='this.form.submit()'>
+              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name='height' onchange='this.form.submit()' onclick="this.form.selected">
                 <option value="0.1">0.1</option>
                 <option selected value="0.2">0.2</option>
                 <option value="0.3">0.3</option>
@@ -53,7 +72,7 @@
       </div>
       <div class="form-row align-items-center">
          <div class="col-auto my-1">
-            <label class="mr-sm-2" for="inlineFormCustomSelect"><h3>Infill</h3></label>
+            <label class="mr-sm-2" for="inlineFormCustomSelect"><p><strong>Infill</strong></p></label>
          </div>
          <div class="col-auto my-1">  
               <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name='infill' onchange='this.form.submit()'>
@@ -65,23 +84,27 @@
         </div>
       </div>
     </form>
+    </div>
     
-    <form action="/delete/<%= data._id %>" method="POST">
+    <div class="thumbnail col-lg-12 col-md-12">
+    <form action="/delete/<%=data.name%>" method="POST">
           <div class="form-row align-items-center">
               <div class="col-auto my-1">
-                  <button name="delete">Delete</button> 
+                  <button name="delete" value="<%=data.name%>">Delete</button> 
               </div>  
           </div>
       </form>
-    
+    </div>
     
     </div>
+  </div>
   <hr>
 <% }); %>
     
 </div>
 </div>
 
+  
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
