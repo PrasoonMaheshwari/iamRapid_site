@@ -8,7 +8,12 @@ var fileUpload = require("express-fileupload");
 var unzip = require("unzip-stream");
 const methodOverride = require('method-override');
 const editJson = require("edit-json-file");
-var mongoose = require("mongoose");
+// const path = require("path");
+// const crypto = require('crypto');
+const mongoose = require('mongoose');
+// const multer = require('multer');
+// const GridFsStorage = require('multer-gridfs-storage');
+// const Grid = require('gridfs-stream');
 
 
 app.use(methodOverride('_method'));
@@ -17,13 +22,27 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(fileUpload());
 app.use(express.static("public"));
 
-
+// const mongoURI = "mongodb://iamrapid:rapid123@ds255930.mlab.com:55930/iamrapid"
+// const conn = mongoose.createConnection(mongoURI);
 mongoose.connect("mongodb://localhost/rapid");
+// // Init gfs
+// let gfs;
+
+// conn.once('open', () => {
+//   // Init stream
+//   gfs = Grid(conn.db, mongoose.mongo);
+//   gfs.collection('rapids');
+// });
 
 var rapidSchema = new mongoose.Schema({
    name: String,
    printTime: String,
-   weight: String
+   weight: String,
+//   possibilities : [
+//         Layer: String,
+//         Infill:String, 
+//         Price : String 
+//   ]
 });
 
 
@@ -82,7 +101,7 @@ app.get("/",function(req, res) {
            console.log(err);
        } else {
           res.render("new",{obj:obj});
-          //console.log (obj[0]._id);
+          //console.log (obj[0]);
        }
     });
 });    
@@ -261,6 +280,10 @@ app.post('/upload', (req, res) => {
 
 app.post("/modify",function(req,res){
     // gfs.files.find().toArray((err, files) => {
+    //  Rapid.findByIdAndRemove(req.params.id, function (err){
+    //     console.log(re)
+    //  });
+    console.log(req.params);
      var layerHeight = req.body.height;
      var infill = req.body.infill;
      sampleFileName=req.body.fileName[0];
@@ -291,7 +314,7 @@ app.post("/modify",function(req,res){
 
 
 // delete route
-app.post("/delete/:id",function(req, res) {
+app.get("/delete/:id",function(req, res) {
     Rapid.findByIdAndRemove(req.params.id, function (err){
         res.redirect("/");
     });
@@ -301,7 +324,7 @@ app.post("/delete/:id",function(req, res) {
 
 // function to run command in terminal
 function commandURL(){
-    return 'cd CuraEngine && \ ./build/CuraEngine slice -v -j ../Cura/resources/machines/dual_extrusion_printer.json -o "output/test.gcode" -e1 -s infill_line_distance=0 -e0 -l "../public/uploads/' + sampleFileName + '"';
+    return 'cd CuraEngine-2.1.3 && \ ./build/CuraEngine slice -v -j ../Cura/resources/machines/dual_extrusion_printer.json -o "output/test.gcode" -e1 -s infill_line_distance=0 -e0 -l "../public/uploads/' + sampleFileName + '"';
 };
 
 
