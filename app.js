@@ -52,67 +52,21 @@ var sampleFileName;
 
 
 app.get("/",function(req, res) {
-    //  var dataTime = fs.readFileSync("outputTime.txt", "utf8");
-    //  var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-     
-     
-     
-    //  commented out part, because it was related to uploadFiles.json
-    //  fs.readFile('public/uploadFiles.json', 'utf8', function readFileCallback(err, data){
-    //     var obj = JSON.parse(data); //now it an object
-    //     if(sampleFileName)
-    //     {
-    //         if (err){
-    //             console.log(err);
-    //         } else {
-    //             var flag =0;
-    //             obj.users.forEach(function(temp){
-    //                 if(temp.name === sampleFileName)
-    //                 {
-    //                     temp.printTime=dataTime;
-    //                     temp.printWeight=dataWeight;
-    //                     flag=1;
-    //                 }
-    //             });
-    //             if(flag===0)
-    //             {
-    //                 obj.users.push({ "name": sampleFileName , "printTime" : dataTime , "printWeight" : dataWeight}); //add some data
-    //             }
-    //             var json = JSON.stringify(obj); //convert it back to json
-    //             fs.writeFile('public/uploadFiles.json', json, 'utf8'); // write it back 
-    //         }
-    //     }
-    //     res.render("new", {obj:obj});
-    // });
-    
-    
-    // converting the above code for mongodb
-    // if(sampleFileName){
-    //     Rapid.findOne({name : sampleFileName}, function(err, founddata){
-    //       if(founddata){
-    //       founddata.printTime = dataTime;
-    //       founddata.weight = dataWeight;
-    //   }
-    //     });
-    // }
-    
     Rapid.find({}, function(err, obj){
        if(err){
            console.log(err);
        } else {
           res.render("new",{obj:obj});
-          //console.log (obj[0]);
        }
     });
 });    
 
+var fileNameArray=[];
 
 app.post('/upload', (req, res) => {
     if (!req.files)
         return res.status(400).send('No files were uploaded.');
-     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    //console.log(req.files);
-    
+     
     let sampleFile = req.files.sampleFile;
     //console.log(sampleFile);
     sampleFileName = req.files.sampleFile.name;
@@ -158,16 +112,12 @@ app.post('/upload', (req, res) => {
             cmd.get(cmdURL, function (){
                 var dataTime = fs.readFileSync("outputTime.txt", "utf8");
                 var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-                console.log(dataTime);
-                console.log(dataWeight);
-    
                 var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
                 Rapid.create(newRapid, function(err, newlyCreated){
                     if(err){
                         console.log(err);
                     }
                     else {
-                        //console.log(newlyCreated);
                     }
                 });
                 res.redirect("/");
@@ -179,116 +129,81 @@ app.post('/upload', (req, res) => {
             //unzipping
             fs.createReadStream("public/uploads/"+sampleFileName)
             .pipe(unzip.Parse())
-            .on('entry', function (entry) {
+            .on('entry', (entry)=> {
                  var filePath = entry.path;
                  var fileType = filePath.slice(-4);
                  var fileName = filePath.slice(6,filePath.length);
                  var type = entry.type; // 'Directory' or 'File'
                  var size = entry.size; // might be undefined in some archives
-                 //console.log(filePath);
                  if (fileType === ".stl" || fileType === ".STL") {
-                        console.log("Choco");
+                        //console.log("Choco");
                         sampleFileName=fileName;
-                        console.log(sampleFileName);
+                        //console.log(sampleFileName);
+                        fileNameArray.push(sampleFileName);
                         entry.pipe(fs.createWriteStream("public/uploads/"+fileName));
-                        
-                        console.log("Image Start");
-                        //stltoimg(()=>{
-                            var thumbnailer = new StlThumbnailer({
-        //url: req.query.url,           // url OR filePath must be supplied, but not both
-        filePath: "public/uploads/" + sampleFileName,            // load file from filesystem
-        requestThumbnails: [
-            {
-                width: 350,
-                height: 350,
-            }
-        ]   
-    })
-    .then(function(thumbnails){
-          // thumbnails is an array (in matching order to your requests) of Canvas objects
-          // you can write them to disk, return them to web users, etc
-          thumbnails[0].toBuffer(function(err, buf){      
-          //res.contentType('image/png');
-          //console.log(typeof buf);
-          var createStream = fs.createWriteStream("public/" + sampleFileName + ".jpg");
-          createStream.end();
-          fs.writeFileSync("public/"+ sampleFileName + ".jpg", buf);
-        })
-    });
-                            console.log("Image End");
-                            console.log("Cura Start");
-                            var cmdURL = commandURL();
-                            let file = editJson("Cura/resources/machines/fdmprinter.json");
-                            file.get().categories.resolution.settings.layer_height.default = 0.2;
-                            file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = 2.333;
-                            file.save();
-                            cmd.get(cmdURL, function(err){
-                                if (!err) {
-                                    console.log("Cura End");
-                                    var dataTime = fs.readFileSync("outputTime.txt", "utf8");
-                                    var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-                                    console.log(dataTime);
-                                    console.log(dataWeight);
-    
-                                    var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
-                                    Rapid.create(newRapid, function(err, newlyCreated){
-                                        if(err){
-                                            console.log(err);
-                                        }
-                                        else {
-                                            console.log(newlyCreated);
-                                        }
-                                    });
-                                } else {
-                                    console.log('error', err);
-                                }
-                            }
-                        );
-                        
-                        
-        
                   } 
                   else {
                         entry.autodrain();
                   }
             });
-            res.redirect("/");
+            res.redirect("/upload/zip");
         }
         else{
             console.log("Enter .stl file");
             sampleFileName = '';
             res.redirect("/");
         }
-        //res.redirect("/");
     });
-    // var dataTime = fs.readFileSync("outputTime.txt", "utf8");
-    // var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-    // console.log(dataTime);
-    // console.log(dataWeight);
-    
-    // var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
-    // Rapid.create(newRapid, function(err, newlyCreated){
-    //     if(err){
-    //         console.log(err);
-    //     }
-    //     else {
-    //         console.log(newlyCreated);
-    //     }
-    // });
-    // res.redirect("/");
 });
 
-app.post("/modify",function(req,res){
+app.get("/upload/zip",function(req, res) {
+    //console.log(fileNameArray);
+    //console.log(fileNameArray.length);
+    if(fileNameArray.length===0)
+        res.redirect("/");    
+    else
+    {
+        sampleFileName=fileNameArray.pop();
+        stltoimg();
+        //console.log("Cura Start");
+        var cmdURL = commandURL();
+        let file = editJson("Cura/resources/machines/fdmprinter.json");
+        file.get().categories.resolution.settings.layer_height.default = 0.2;
+        file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = 2.333;
+        file.save();
+        cmd.get(cmdURL, function(err){
+        if (!err) {
+            //console.log("Cura End");
+            var dataTime = fs.readFileSync("outputTime.txt", "utf8");
+            var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
+            //console.log(dataTime);
+            //console.log(dataWeight);
+            var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
+            Rapid.create(newRapid, function(err, newlyCreated){
+                if(err){
+                    console.log(err);
+                }
+                else {
+                    res.redirect("/upload/zip");
+                }
+            });
+        } else {
+            console.log('error', err);
+            }
+        });
+    }
+});
+
+
+app.post("/modify/:id",function(req,res){
     // gfs.files.find().toArray((err, files) => {
-    //  Rapid.findByIdAndRemove(req.params.id, function (err){
-    //     console.log(re)
-    //  });
-    console.log(req.params);
      var layerHeight = req.body.height;
      var infill = req.body.infill;
-     sampleFileName=req.body.fileName[0];
-     var cmdURL = commandURL();
-     console.log(sampleFileName[0]);
+     var name = req.body.fileName[0];
+     console.log(name);
+     //sampleFileName=req.body.fileName[0];
+     var cmdURL = modifyCommandURL(name);
+     //console.log(sampleFileName[0]);
     //  var createStream = fs.createWriteStream( "findingFanny.txt");
     //       createStream.end();
     //       fs.writeFileSync("findingFanny.txt", req);
@@ -298,17 +213,28 @@ app.post("/modify",function(req,res){
      file.get().categories.resolution.settings.layer_height.default = layerHeight;
      file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = infill;
      file.save();
-     cmd.get(
-         cmdURL
-         ,function(err, data, stderr){
-             if (!err) {
-               //console.log('terminal runs');
-                 res.redirect("/");
-             } else {
-               console.log('error', err);
-             }
-         }
-    );
+     cmd.get(cmdURL, function (){
+                var dataTime = fs.readFileSync("outputTime.txt", "utf8");
+                var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
+                console.log(dataTime);
+                console.log(dataWeight);
+                Rapid.findByIdAndUpdate(req.params.id, {
+                    name: name,
+                    printTime: dataTime,
+                    weight: dataWeight
+                }, function(err, updatedRapid){
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log(updatedRapid);
+                            res.redirect("/");
+                        }
+                })
+    
+                //var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
+    
+            });
     
 });
 
@@ -326,7 +252,9 @@ app.get("/delete/:id",function(req, res) {
 function commandURL(){
     return 'cd CuraEngine-2.1.3 && \ ./build/CuraEngine slice -v -j ../Cura/resources/machines/dual_extrusion_printer.json -o "output/test.gcode" -e1 -s infill_line_distance=0 -e0 -l "../public/uploads/' + sampleFileName + '"';
 };
-
+function modifyCommandURL(name){
+    return 'cd CuraEngine-2.1.3 && \ ./build/CuraEngine slice -v -j ../Cura/resources/machines/dual_extrusion_printer.json -o "output/test.gcode" -e1 -s infill_line_distance=0 -e0 -l "../public/uploads/' + name + '"';
+};
 
 
 // function to create new data of a new stl file
