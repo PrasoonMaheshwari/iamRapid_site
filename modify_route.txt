@@ -1,0 +1,42 @@
+app.post("/modify/:id",function(req,res){
+    // gfs.files.find().toArray((err, files) => {
+     var layerHeight = req.body.height;
+     var infill = req.body.infill;
+     var name = req.body.fileName[0];
+     console.log(name);
+     //sampleFileName=req.body.fileName[0];
+     var cmdURL = modifyCommandURL(name);
+     //console.log(sampleFileName[0]);
+    //  var createStream = fs.createWriteStream( "findingFanny.txt");
+    //       createStream.end();
+    //       fs.writeFileSync("findingFanny.txt", req);
+     console.log(layerHeight + "  " + infill);
+     
+     let file = editJson("Cura/resources/machines/fdmprinter.json");
+     file.get().categories.resolution.settings.layer_height.default = layerHeight;
+     file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = infill;
+     file.save();
+     cmd.get(cmdURL, function (){
+                var dataTime = fs.readFileSync("outputTime.txt", "utf8");
+                var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
+                console.log(dataTime);
+                console.log(dataWeight);
+                Rapid.findByIdAndUpdate(req.params.id, {
+                    name: name,
+                    printTime: dataTime,
+                    weight: dataWeight
+                }, function(err, updatedRapid){
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log(updatedRapid);
+                            res.redirect("/");
+                        }
+                })
+    
+                //var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
+    
+            });
+    
+});
