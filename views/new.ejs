@@ -15,7 +15,34 @@
 <body>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
-<div class="container">
+
+<!--navbar-------------------------------------------------------------------------------------------------------------------------->
+<nav class="navbar fixed-top  navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">IamRapid</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Contact Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">About Us</a>
+      </li>
+    </ul>
+    <div class="form-inline my-2 my-lg-0">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><a href="/mycart" >Cart :  <span id="cartItems"><%=cartItems%></span> </a></button>
+    </div>
+  </div>
+</nav>
+
+<!---------------------------------------------------------------------------------------------------------------------------------->
+<div class="container marginNav">
   <hr>
 <div class="row">
     <div class="col-md-12 m-auto ">
@@ -24,7 +51,7 @@
       <!--<div class="custom-file mb-3" style = "border : 1px solid black">-->
       <form action="/upload" method="POST" enctype="multipart/form-data" ref='uploadForm' 
       id='uploadForm' class="fileupload ddColor " style=" height:200px">
-        <div class="custom-file mb-3 shadow ddColor " style="height:200px; border: 2px solid lightgray">
+        <div class="custom-file mb-3 shadow ddColor" style="height:200px; border: 2px solid lightgray">
             <input type="file" name="sampleFile" class="custom-file-input ddColor " onchange="form.submit()" style="height:200px"/>
             <label for="file" class="custom-file-label ddColor" >
               <p>  </p>
@@ -45,12 +72,13 @@
 <% obj.forEach(function(data){ %>
   
   <div class="col-lg-12 col-md-12 shadow" style="border: 1px solid darkgray; margin: 10px 0; height:300px; border-radius:  .5rem .5rem "  >
-  <div class="row">  
-    <div class="thumbnail col-lg-4 col-md-4" style="border-right: 1px solid darkgray; height:300px; ">
+   
+    <div class="row">
+    <div class="thumbnail col-lg-4 col-md-4" style="border-right: 1px solid darkgray; height:298px; ">
         <img src="/<%=data.name%>.jpg" height="80%"/>
     </div>
     
-    <div class="col-lg-4 col-md-4 addBackgroundColor" style="border-right: 1px solid darkgray; height:300px;">
+    <div class="col-lg-4 col-md-4 addBackgroundColor" style="border-right: 1px solid darkgray; height:298px;">
       <h4><strong>Print Time = </strong><%=data.printTime%> </h4>
       <h4><strong>Weight = </strong><%=data.weight%> </h4>
       
@@ -60,9 +88,10 @@
             <label class="mr-sm-2" for="inlineFormCustomSelect"><p><strong>Layer Height</strong></p></label>
          </div>
          <div class="form-row align-items-center">
-              <select class="custom-select mr-sm-2 layerheight" name="height"  onchange='this.form.submit()'>
+              <select class="custom-select mr-sm-2 layerSelect" name="height" onchange='form.submit()'>
+                <!--<option default value="" id="layerChoose" disabel="disable">Layer Height</option>-->
                 <option value="0.1">0.1</option>
-                <option default value="0.2">0.2</option>
+                <option selected value="0.2">0.2</option>
                 <option value="0.3">0.3</option>
                 <input type="text" name="fileName" value="<%=data.name%>" style="display : none"/>
               </select>
@@ -74,33 +103,39 @@
          </div>
          <div class="col-auto my-1">  
               <select class="custom-select mr-sm-2" id="infill" name='infill' onchange='this.form.submit()'>
-                <option default value="2.333">30%</option>
-                <option value="1.333">20%</option>
-                <option value="0.333">10%</option>
+                <option default value="1.1667">30%</option>
+                <option value="3.5">20%</option>
+                <option value="7.0">10%</option>
                 <input type="text" name="fileName" value="<%=data.name%>" style="display : none"/>
               </select>
         </div>
       </div>  
       </form>
     </div>
-    
-    <div class="col-lg-4 col-md-4 addBackgroundColor" style="height:300px; border-radius: 0 .5rem .5rem 0">
+    <div class="col-lg-4 col-md-4 addBackgroundColor" style="height:298px; border-radius: 0 .5rem .5rem 0">
         <div class="form-row align-items-center">
           <div class="col-auto my-1">
             <label class="mr-sm-2" for="inlineFormCustomSelect"><h4 class='quantity'>Quantity</h4></label>
           </div>
           <div class="qty-input">
             <i class="less">-</i>
-              <input type="text" value="1"/>
+              <input id="quantity" type="text" value="1"/>
             <i class="more">+</i>
           </div>
         </div> 
-        <a href="#" class="btn btn-sm animated-button thar-one">Add to Cart</a> 
+      <form action="/AddToCart/<%=data._id%>" id="<%=data._id%>" method="POST">
+        <input type="text" name="quantity"  id="quantityDisplay"value="1"  style="display : none">
+        <input type="text" name="Price"  value="<%=data.printTime%>"  style="display : none">
+        <a href="#" class="btn btn-sm animated-button thar-one" onclick="document.getElementById('<%=data._id%>').submit();">Add to Cart</a> 
+        
+       
         <a href="/delete/<%=data._id%>" name="delete" class="btn btn-sm animated-button victoria-one" value="<%=data.name%>">&nbsp;Delete</a>
+      </form>
     </div>
+  </div>
+     
     
     
-    </div>
   </div>
   
 <% }); %>
@@ -111,7 +146,7 @@
 </div>
 
   <script>
-  // $( "select" ).change(function() {
+   //$( "#layerHeight" ).change(function() {
   //   var str = "";
   //   $( "select option:selected" ).each(function() {
   //     str += $( this ).text() + " ";
@@ -121,11 +156,11 @@
   // .trigger( "change" );
 
      
-     //$('.layerheight').on("change",function(){
-      //   var lh=$('#layerheight').name();
+     $('#layerSelect').on("change",function(){
+        var lh=$('#layerSelect option:selected').val();
        //$('#haha').css('color','blue');
-       //console.log(lh);
-     //});
+       console.log(lh);
+     });
   
   $('.qty-input i').on('click',function() {
 		val = parseInt($('.qty-input input').val());
@@ -141,7 +176,16 @@
 		}
 
 		$('.qty-input input').val(val);
+    
+    var q = val;
+    $('#quantityDisplay').val(q);
+    console.log($('#quantityDisplay').val());
   });
+  
+  $('i').on('click', function(){
+      
+  });
+
 
   
   </script>

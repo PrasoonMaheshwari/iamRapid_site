@@ -38,6 +38,7 @@ var rapidSchema = new mongoose.Schema({
    name: String,
    printTime: String,
    weight: String,
+//   price: Number
 //   possibilities : [
 //         Layer: String,
 //         Infill:String, 
@@ -45,21 +46,45 @@ var rapidSchema = new mongoose.Schema({
 //   ]
 });
 
+var cartSchema = new mongoose.Schema({
+   name: String,
+   price: String,
+   quantity: Number,
+});
 
 var Rapid = mongoose.model("Rapid", rapidSchema);
+var Cart = mongoose.model("Cart", cartSchema);
 
 var sampleFileName;
 
 
 app.get("/",function(req, res) {
-    Rapid.find({}, function(err, obj){
+    var cartItems;
+    Cart.find({}, function(err, obj){
        if(err){
            console.log(err);
        } else {
-          res.render("new",{obj:obj});
-       }
+            cartItems = obj.length;
+            Rapid.find({}, function(err, obj){
+                if(err){
+                   console.log(err);
+                } else {
+                  res.render("new",{obj:obj,cartItems:cartItems});
+                }
+            });
+        }
+    });   
+});
+
+app.get("/mycart",function(req, res) {
+    Cart.find({}, function(err, obj){
+        if(err){
+            console.log(err);
+        } else {
+            res.render("cart",{obj:obj});
+        }
     });
-});    
+});
 
 var fileNameArray=[];
 
@@ -68,23 +93,7 @@ app.post('/upload', (req, res) => {
         return res.status(400).send('No files were uploaded.');
      
     let sampleFile = req.files.sampleFile;
-    //console.log(sampleFile);
     sampleFileName = req.files.sampleFile.name;
-    
-    // var dataTime = fs.readFileSync("outputTime.txt", "utf8");
-    // var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-    
-    // var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
-    // Rapid.create(newRapid, function(err, newlyCreated){
-    //     if(err){
-    //         console.log(err);
-    //     }
-    //     else {
-    //         console.log(newlyCreated);
-    //     }
-    // });
-    
-    // Use the mv() method to place the file somewhere on your server
     
     sampleFile.mv('public/uploads/'+ sampleFileName, function(err) {
         if (err)
@@ -97,18 +106,6 @@ app.post('/upload', (req, res) => {
             file.get().categories.resolution.settings.layer_height.default = 0.2;
             file.get().categories.infill.settings.infill_sparse_density.children.infill_line_distance.default = 2.333;
             file.save();
-            // cmd.get(
-            //      cmdURL
-            //      ,function(err, data, stderr){
-            //          if (!err) {
-            //           //console.log('terminal runs');
-            //             // res.redirect("/");
-            //          } else {
-            //           console.log('error', err);
-            //          }
-            //      }
-                 
-            // );
             cmd.get(cmdURL, function (){
                 var dataTime = fs.readFileSync("outputTime.txt", "utf8");
                 var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
@@ -238,7 +235,25 @@ app.post("/modify/:id",function(req,res){
     
 });
 
-
+app.post("/AddToCart/:id",function(req,res){
+    // gfs.files.find().toArray((err, files) => {
+    var Price = req.body.Price;
+    var name = req.body.fileName[0];
+    var qnt = Number(req.body.quantity);
+    console.log(req.body);
+    console.log(req.params);
+    var newCart = {name: name, price: Price, quantity: qnt};
+    Cart.create(newCart, function(err, newlyCreated){
+                     if(err){
+                        console.log(err);
+                     }
+                     else {
+                        Rapid.findByIdAndRemove(req.params.id, function (err){
+                            res.redirect("/");
+                        });
+                     }
+                 });
+});
 // delete route
 app.get("/delete/:id",function(req, res) {
     Rapid.findByIdAndRemove(req.params.id, function (err){
@@ -246,6 +261,11 @@ app.get("/delete/:id",function(req, res) {
     });
 });
 
+app.get("/deletecart/:id",function(req, res) {
+    Cart.findByIdAndRemove(req.params.id, function (err){
+        res.redirect("/mycart");
+    });
+});
 
 
 // function to run command in terminal

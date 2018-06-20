@@ -697,11 +697,11 @@ void GCodeExport::finalize(double moveSpeed, const char* endCode)
     
 //     std::ofstream theFile1;
 //     theFile1.open("../output.txt");
-    std::ofstream theFile1;
-    theFile1.open("../outputWeight.txt");
-    double printWeight = double(getCurrentExtrudedVolume()*.00124);
-    theFile1 << printWeight << " g/cm^3 \n";
-    log("Weight: %lf\n",printWeight);
+    // std::ofstream theFile1;
+    // theFile1.open("../outputWeight.txt");
+    // double printWeight = double(getCurrentExtrudedVolume()*.00124);
+    // theFile1 << printWeight << " g \n";
+    // log("Weight: %lf\n",printWeight);
     
     // std::ifstream theFile1;
     // float layerHeight;
@@ -710,8 +710,13 @@ void GCodeExport::finalize(double moveSpeed, const char* endCode)
     // log("Layer Height = %.1f\n",layerHeight);
     log("Filament: %d\n", int(getTotalFilamentUsed(0)));
     for(int n=1; n<MAX_EXTRUDERS; n++)
-        if (getTotalFilamentUsed(n) > 0)
+        if (getTotalFilamentUsed(n) > 0)    
             log("Filament%d: %d\n", n + 1, int(getTotalFilamentUsed(n)));
+    std::ofstream theFile1;
+    theFile1.open("../outputWeight.txt");
+    double printWeight = int(getTotalFilamentUsed(0)*.00125);
+    theFile1 << printWeight << " g \n";
+    log("Weight: %lf\n",printWeight);        
     output_stream->flush();
 }
 }//namespace cura
