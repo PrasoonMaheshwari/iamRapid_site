@@ -36,8 +36,8 @@ mongoose.connect("mongodb://localhost/rapid");
 
 var rapidSchema = new mongoose.Schema({
    name: String,
-   printTime: String,
-   weight: String,
+   printTime: Number,
+   weight: Number
 //   price: Number
 //   possibilities : [
 //         Layer: String,
@@ -48,7 +48,7 @@ var rapidSchema = new mongoose.Schema({
 
 var cartSchema = new mongoose.Schema({
    name: String,
-   price: String,
+   price: Number,
    quantity: Number,
 });
 
@@ -109,7 +109,7 @@ app.post('/upload', (req, res) => {
             cmd.get(cmdURL, function (){
                 var dataTime = fs.readFileSync("outputTime.txt", "utf8");
                 var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
-                var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
+                var newRapid = {name: sampleFileName, printTime: Number(dataTime), weight: Number(dataWeight)};
                 Rapid.create(newRapid, function(err, newlyCreated){
                     if(err){
                         console.log(err);
@@ -175,7 +175,7 @@ app.get("/upload/zip",function(req, res) {
             var dataWeight = fs.readFileSync("outputWeight.txt", "utf8");
             //console.log(dataTime);
             //console.log(dataWeight);
-            var newRapid = {name: sampleFileName, printTime: dataTime, weight: dataWeight};
+            var newRapid = {name: sampleFileName, printTime: Number(dataTime), weight: Number(dataWeight)};
             Rapid.create(newRapid, function(err, newlyCreated){
                 if(err){
                     console.log(err);
@@ -217,8 +217,8 @@ app.post("/modify/:id",function(req,res){
                 console.log(dataWeight);
                 Rapid.findByIdAndUpdate(req.params.id, {
                     name: name,
-                    printTime: dataTime,
-                    weight: dataWeight
+                    printTime: Number(dataTime),
+                    weight: Number(dataWeight)
                 }, function(err, updatedRapid){
                         if(err){
                             console.log(err);
@@ -237,11 +237,10 @@ app.post("/modify/:id",function(req,res){
 
 app.post("/AddToCart/:id",function(req,res){
     // gfs.files.find().toArray((err, files) => {
-    var Price = req.body.Price;
-    var name = req.body.fileName[0];
+    var Price = Number(req.body.Price);
+    var name = req.body.fileName;
     var qnt = Number(req.body.quantity);
     console.log(req.body);
-    console.log(req.params);
     var newCart = {name: name, price: Price, quantity: qnt};
     Cart.create(newCart, function(err, newlyCreated){
                      if(err){
@@ -315,7 +314,7 @@ function uploadJSON(){
                 });
                 if(flag===0)
                 {
-                    obj.users.push({ "name": sampleFileName , "printTime" : dataTime , "printWeight" : dataWeight}); //add some data
+                    obj.users.push({ "name": sampleFileName , "printTime" : Number(dataTime) , "printWeight" : Number(dataWeight)}); //add some data
                 }
                 var json = JSON.stringify(obj); //convert it back to json
                 fs.writeFile('public/uploadFiles.json', json, 'utf8'); // write it back 

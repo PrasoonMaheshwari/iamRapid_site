@@ -690,9 +690,9 @@ void GCodeExport::finalize(double moveSpeed, const char* endCode)
     std::ofstream theFile;
     theFile.open("../outputTime.txt");
     int printTime = int(getTotalPrintTime());
-    int printTimeHrs = int(printTime)/3600;
+    int printTimeHrs = (int(printTime)/3600)+1;
     int printTimeMin = printTime%60;
-    theFile << printTimeHrs << " Hrs " << printTimeMin << " Mins" << std::endl;
+    theFile << printTimeHrs << std::endl;
     log("Print time: %d\n in Hrs = %d\n in min = %d", int(getTotalPrintTime()), printTimeHrs,printTimeMin);
     
 //     std::ofstream theFile1;
@@ -714,8 +714,8 @@ void GCodeExport::finalize(double moveSpeed, const char* endCode)
             log("Filament%d: %d\n", n + 1, int(getTotalFilamentUsed(n)));
     std::ofstream theFile1;
     theFile1.open("../outputWeight.txt");
-    double printWeight = int(getTotalFilamentUsed(0)*.00125);
-    theFile1 << printWeight << " g \n";
+    double printWeight = int(getTotalFilamentUsed(0));
+    theFile1 << printWeight;
     log("Weight: %lf\n",printWeight);        
     output_stream->flush();
 }

@@ -56,7 +56,8 @@
             <hr>
     </div>
 
-        <div class="col-md-9 m-auto ">
+        <div class="col-md-9 m-auto" style="border-right: 1px solid black">
+          <div class="container">
             <div class="row">
                 <% obj.forEach(function(data){ %>
   
@@ -67,29 +68,41 @@
                                 <img src="/<%=data.name%>.jpg" height="80%"/>
                             </div>
     
-                            <div class="col-lg-7 col-md-7 addBackgroundColor" style="border-right: 1px solid darkgray; height:148px;">
-                                <p><h5><%=data.name%></h5></p>
-                                <p><%=data.price%> X <%=data.quantity%></p>    
+                            <div class="col-lg-6 col-md-6 addBackgroundColor" style="border-right: 1px solid darkgray; height:148px;">
+                                <p><h4><%=data.name%></h4></p>
+                                <p> ₹<%= (Number(data.price)/Number(data.quantity))%> X <%=data.quantity%></p>    
      
                             </div>
-                            <div class="col-lg-2 col-md-2 addBackgroundColor" style="height:148px; border-radius: 0 .5rem .5rem 0">
-                                <a href="/deletecart/<%=data._id%>" name="delete" class="btn btn-sm animated-button victoria-one" value="<%=data.name%>">&nbsp;Delete</a>
+                            <div class="col-lg-3 col-md-3 addBackgroundColor" style="height:148px; border-radius: 0 .5rem .5rem 0">
+                                <h4 style="margin-top: 20px">Price : ₹ <span><%=data.price%></span></h4>
+                                <a style="margin-top: 35px padding: 5px 0" href="/deletecart/<%=data._id%>" name="delete" class="btn btn-sm animated-button victoria-one" value="<%=data.name%>">&nbsp;Delete</a>
                             </div>
                         </div>
                     </div>
                 <% }); %>
             </div>
+          </div>  
         </div>
         <div class="col-md-3 ">
-            <p>Subtotal</p>
+          
+            <p>Subtotal :</p>
             <p>Shipping Charges</p>
             <p>Tax</p>
             <p><strong>Total</strong></p>
+            
         </div>    
     </div>
 </div>
 
   <script>
+  // $("document").ready(function(){
+  // // Number sum=0;
+  //   $("h4 span").each(function(index){
+  //     Number x = Number($( this ).text());
+  //     //sum=sum+Number(x);
+  //   });
+  //   //console.log(sum);
+  // });
   </script>
   
  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

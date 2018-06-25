@@ -40,17 +40,17 @@
     },
     "machine_width": {
       "description": "The width (X-direction) of the printable area.",
-      "default": 100,
+      "default": 1000,
       "global_only": true
     },
     "machine_depth": {
       "description": "The depth (Y-direction) of the printable area.",
-      "default": 100,
+      "default": 1000,
       "global_only": true
     },
     "machine_height": {
       "description": "The height (Z-direction) of the printable area.",
-      "default": 100,
+      "default": 1000,
       "global_only": true
     },
     "machine_heated_bed": {
@@ -205,7 +205,7 @@
           "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
           "unit": "mm",
           "type": "float",
-          "default": "0.1",
+          "default": 0.2,
           "min_value": "0.001",
           "min_value_warning": "0.04",
           "max_value_warning": "0.8 * machine_nozzle_size",
@@ -342,7 +342,7 @@
           "label": "Wall Thickness",
           "description": "The thickness of the outside walls in the horizontal direction. This value divided by the wall line width defines the number of walls.",
           "unit": "mm",
-          "default": 0.7,
+          "default": 1.2,
           "min_value": "0",
           "min_value_warning": "line_width",
           "max_value_warning": "5 * line_width",
@@ -364,7 +364,7 @@
           "label": "Top/Bottom Thickness",
           "description": "The thickness of the top/bottom layers in the print. This value divided by the layer height defines the number of top/bottom layers.",
           "unit": "mm",
-          "default": 0.75,
+          "default": 1.2,
           "min_value": "0",
           "max_value": "5",
           "min_value_warning": "0.6",
@@ -375,7 +375,7 @@
               "label": "Top Thickness",
               "description": "The thickness of the top layers in the print. This value divided by the layer height defines the number of top layers.",
               "unit": "mm",
-              "default": 0.75,
+              "default": 1.2,
               "min_value": "0",
               "max_value_warning": "100",
               "type": "float",
@@ -397,7 +397,7 @@
               "label": "Bottom Thickness",
               "description": "The thickness of the bottom layers in the print. This value divided by the layer height defines the number of bottom layers.",
               "unit": "mm",
-              "default": 0.75,
+              "default": 1.2,
               "min_value": "0",
               "type": "float",
               "visible": false,
@@ -532,7 +532,7 @@
               "description": "Distance between the printed infill lines. This setting is calculated by the infill density and the infill line width.",
               "unit": "mm",
               "type": "float",
-              "default": "1.1667",
+              "default": 2.333,
               "min_value": "0",
               "visible": false,
               "inherit_function": "0 if infill_sparse_density == 0 else (infill_line_width * 100) / infill_sparse_density"
@@ -1136,7 +1136,7 @@
           "type": "float",
           "min_value": "0",
           "max_value": "90",
-          "default": 50,
+          "default": 45,
           "visible": false,
           "enabled": "support_enable"
         },
@@ -1151,7 +1151,7 @@
             "concentric": "Concentric",
             "zigzag": "Zig Zag"
           },
-          "default": "zigzag",
+          "default": "grid",
           "visible": false,
           "enabled": "support_enable",
           "global_only": true
@@ -1747,21 +1747,21 @@
           "label": "Remove All Holes",
           "description": "Remove the holes in each layer and keep only the outside shape. This will ignore any invisible internal geometry. However, it also ignores layer holes which can be viewed from above or below.",
           "type": "boolean",
-          "default": false,
+          "default": true,
           "visible": false
         },
         "meshfix_extensive_stitching": {
           "label": "Extensive Stitching",
           "description": "Extensive stitching tries to stitch up open holes in the mesh by closing the hole with touching polygons. This option can introduce a lot of processing time.",
           "type": "boolean",
-          "default": false,
+          "default": true,
           "visible": false
         },
         "meshfix_keep_open_polygons": {
           "label": "Keep Disconnected Faces",
           "description": "Normally Cura tries to stitch up small holes in the mesh and remove parts of a layer with big holes. Enabling this option keeps those parts which cannot be stitched. This option should be used as a last resort option when everything else fails to produce proper GCode.",
           "type": "boolean",
-          "default": false,
+          "default": true,
           "visible": false
         }
       }
